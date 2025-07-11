@@ -24,4 +24,8 @@ public class StudentService {
   public List<StudentCourse> searchStudentCourseList() {
    return repository.searchCourse();
   }
+
+  public int newInsetStudent(Student student) {
+   return repository.insertStudent(student);
+  }
 }
