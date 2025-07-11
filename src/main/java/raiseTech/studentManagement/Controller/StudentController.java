@@ -46,13 +46,12 @@ public class StudentController {
     return "registerStudent";
   }
 
-
   @PostMapping("/registerStudent")
   public String registerStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
       return "registerStudent";
     }
-    System.out.println(studentDetail.getStudent().getName() + "さんが追加されました");
+    service.newInsetStudent(studentDetail.getStudent());
     return "redirect:/studentList";
   }
 }
