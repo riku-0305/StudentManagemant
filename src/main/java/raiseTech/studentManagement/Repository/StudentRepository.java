@@ -3,6 +3,7 @@ package raiseTech.studentManagement.Repository;
 import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
@@ -18,7 +19,7 @@ public interface StudentRepository {
 
   @Insert("INSERT INTO students (name,reading, nick_name,mail_address,address,age,gender ,remark)" +
   "VALUES (#{name} , #{reading} , #{nickName} , #{mailAddress} , #{address} , #{age} , #{gender} , #{remark}) " )
-  //INSERT,UPDATE,DELETEはこの操作によって何件のレコードが影響を受けたかを示すために戻り値はint型を使う。
-  int insertStudent(Student student);
+  @Options(useGeneratedKeys = true, keyProperty = "id")
+  void insertStudent(Student student);
 
 }
