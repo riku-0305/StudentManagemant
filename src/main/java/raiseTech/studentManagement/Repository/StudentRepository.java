@@ -22,4 +22,8 @@ public interface StudentRepository {
   @Options(useGeneratedKeys = true, keyProperty = "id")
   void insertStudent(Student student);
 
+  @Insert("INSERT INTO  students_courses (students_id,  courses_name, start_date, expected_end_date)" +
+  "VALUES (#{studentsId}, #{coursesName}, #{startDate}, #{expectedEndDate})")
+  @Options(useGeneratedKeys = true, keyProperty = "coursesId")
+  void insertStudentCourse(StudentCourse studentCourse);
 }
