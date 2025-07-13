@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http//www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>受講生詳細</title>
+</head>
+<body>
+<h1>受講生詳細</h1>
+<form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+  <div>
+    <label for="id">ID</label>
+    <input type="text" id="id" th:field="*{student.id}" required />
+  </div>
+  <div>
+    <label for="name">名前</label>
+    <input type="text" id="name" th:field="*{student.name}" required />
+  </div>
+  <div>
+    <label for="reading">かな名</label>
+    <input type="text" id="reading" th:field="*{student.reading}" required />
+  </div>
+  <div>
+    <label for="nickName">ニックネーム</label>
+    <input type="text" id="nickName" th:field="*{student.nickName}" required />
+  </div>
+  <div>
+    <label for="mailAddress">メールアドレス</label>
+    <input type="text" id="mailAddress" th:field="*{student.mailAddress}" required />
+  </div>
+  <div>
+    <label for="address">住所</label>
+    <input type="text" id="address" th:field="*{student.address}" required />
+  </div>
+  <div>
+    <label for="age">年齢</label>
+    <input type="text" id="age" th:field="*{student.age}" required />
+  </div>
+  <div>
+    <label for="gender">性別</label>
+    <input type="text" id="gender" th:field="*{student.gender}" required />
+  </div>
+  <div>
+    <label for="remark">備考</label>
+    <input type="text" id="remark" th:field="*{student.remark}" required />
+  </div>
+  <div th:each="course, stat : *{studentCourses}">
+    <label for="coursesId" th:for="studentCourse.__${stat.index}__.coursesId">受講コースID:</label>
+    <input type="text" id="coursesId" th:id="studentCourse.__${stat.index}__.coursesId"
+           th:field="*{studentCourses[__${stat.index}__].coursesId}"/>
+    <label for="coursesName" th:for="studentCourse.__${stat.index}__.coursesName">受講コース名:</label>
+    <input type="text" id="coursesName" th:id="studentCourse.__${stat.index}__.coursesName"
+           th:field="*{studentCourses[__${stat.index}__].coursesName}"/>
+  </div>
+  <div>
+    <button type="submit">更新</button>
+  </div>
+</form>
+</body>
+</html>
