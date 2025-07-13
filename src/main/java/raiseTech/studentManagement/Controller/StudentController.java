@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import raiseTech.studentManagement.Controller.Converter.StudentConverter;
 import raiseTech.studentManagement.Data.Student;
@@ -22,7 +23,7 @@ public class StudentController {
   private StudentConverter converter;
 
   @Autowired
-  public StudentController(StudentService service,StudentConverter converter) {
+  public StudentController(StudentService service, StudentConverter converter) {
     this.service = service;
     this.converter = converter;
   }
@@ -32,13 +33,15 @@ public class StudentController {
     List<Student> student = service.searchStudentList();
     List<StudentCourse> studentCourse = service.searchStudentCourseList();
 
-    model.addAttribute("studentList",converter.convertStudentDetails(student,studentCourse));
+    model.addAttribute("studentList", converter.convertStudentDetails(student, studentCourse));
     return "studentList";
   }
 
-  @GetMapping("/studentCourseList")
-  public List<StudentCourse> getStudentCourseList() {
-    return service.searchStudentCourseList();
+  @GetMapping("/student/{id}")
+  public String getStudent(@PathVariable Long id, Model model) {
+   StudentDetail studentDetail = service.searchStudent(id);
+   model.addAttribute("studentDetail",studentDetail);
+   return "updateStudent";
   }
 
   @GetMapping("/newStudent")
@@ -57,4 +60,13 @@ public class StudentController {
     service.newInsetStudent(studentDetail);
     return "redirect:/studentList";
   }
+
+ @PostMapping("/updateStudent")
+ public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
+   if (result.hasErrors()) {
+    return "updateStudent";
+   }
+   service.updateStudent(studentDetail);
+   return "redirect:/studentList";
+ }
 }
