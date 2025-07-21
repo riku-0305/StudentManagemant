@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.ibatis.annotations.ConstructorArgs;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
 
@@ -17,6 +16,6 @@ import raiseTech.studentManagement.Data.StudentCourse;
 public class StudentDetail {
 
   private Student student;
-  private List<StudentCourse> studentCourses;
+  private List<StudentCourse> studentCourseList;
 
 }
