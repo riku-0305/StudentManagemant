@@ -19,21 +19,21 @@ public class StudentConverter {
    * 受講生とそれに紐づくコースは複数存在するので、受講生とその受講生が持つコース情報をループさせ
    *受講生詳細を組み立て。
    * @param student 受講生情報
-   * @param studentCourse 受講生コース情報リスト
+   * @param studentCourseList 受講生コース情報リスト
    * @return 受講生コース情報詳細
    */
   public List<StudentDetail> convertStudentDetails(List<Student> student,
-      List<StudentCourse> studentCourse) {
+      List<StudentCourse> studentCourseList) {
 
     List<StudentDetail> studentDetails = new ArrayList<>();
     student.forEach(students -> {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(students);
-      List<StudentCourse> convertStudentCourses = studentCourse.stream()
-          .filter(studentCourses -> students.getId().equals(studentCourses.getStudentsId()))
+      List<StudentCourse> convertStudentCourse = studentCourseList.stream()
+          .filter(studentCourse -> students.getId().equals(studentCourse.getStudentsId()))
           .collect(Collectors.toList());
 
-      studentDetail.setStudentCourses(convertStudentCourses);
+      studentDetail.setStudentCourseList(convertStudentCourse);
       studentDetails.add(studentDetail);
     });
     return studentDetails;
