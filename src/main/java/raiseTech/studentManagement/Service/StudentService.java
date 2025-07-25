@@ -9,6 +9,7 @@ import raiseTech.studentManagement.Controller.Converter.StudentConverter;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
 import raiseTech.studentManagement.Domain.StudentDetail;
+import raiseTech.studentManagement.Exception.StudentNotFoundException;
 import raiseTech.studentManagement.Repository.StudentRepository;
 
 /**
@@ -47,6 +48,11 @@ public class StudentService {
    */
   public StudentDetail searchStudent(Long id) {
     Student student = repository.searchStudent(id);
+
+    if (student == null) {
+      throw new StudentNotFoundException(id);
+    }
+
     List<StudentCourse> studentCourses = repository.searchStudentCourse(student.getId());
     return new StudentDetail(student,studentCourses);
   }

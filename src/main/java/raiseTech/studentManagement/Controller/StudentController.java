@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raiseTech.studentManagement.Domain.StudentDetail;
+import raiseTech.studentManagement.Exception.TestStudentListException;
 import raiseTech.studentManagement.Service.StudentService;
 
 /**
@@ -61,7 +62,6 @@ public class StudentController {
     return  ResponseEntity.ok(responseStudentDetail);
   }
 
-
   /**
    * 受講生詳細の更新を行う。論理削除の更新もここで行う。
    *
@@ -72,5 +72,11 @@ public class StudentController {
  public ResponseEntity<String>updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
    service.updateStudent(studentDetail);
    return ResponseEntity.ok("更新処理に成功しました");
+ }
+
+ //(例外処理テスト用)
+ @GetMapping("/testStudentList")
+  public List<StudentDetail> getTestStudentList() throws TestStudentListException {
+   throw new TestStudentListException("現在このAPIは使われておりません。生徒一覧の検索のURLはStudentListをお使いください。");
  }
 }
