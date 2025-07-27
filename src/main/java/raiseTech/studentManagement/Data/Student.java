@@ -4,7 +4,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +13,7 @@ import lombok.Setter;
 
 public class Student {
 
-  @Min(value = 1, message = "IDは1以上を入力してください")
+  @Min(value = 1, message = "IDは1以上の整数値を入力してください")
   private Long id;
 
   @NotBlank(message = "名前入力は必須です")

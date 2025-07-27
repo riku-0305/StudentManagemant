@@ -14,6 +14,7 @@ public class StudentCourse {
   @Min(value = 1, message = "コースIDは1以上を入力してください")
   private Long coursesId;
 
+  @Min(value = 1, message = "生徒IDは1以上を入力してください")
   private Long studentsId;
 
   @NotBlank(message = "コース名の登録は必須です")
