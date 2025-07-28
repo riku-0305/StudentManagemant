@@ -1,5 +1,6 @@
 package raiseTech.studentManagement.Data;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -8,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+@Schema(description = "受講生")
 @Getter
 @Setter
 
@@ -24,6 +26,7 @@ public class Student {
   @Size(min = 1, max = 100, message = "ふりがなは1文字以上100文字以下で入力してください")
   private String reading;
 
+  @Size(max = 100, message = "ニックネームは100文字以内で入力してください")
   private String nickName;
 
   @NotBlank(message = "メールアドレスは必須です")
