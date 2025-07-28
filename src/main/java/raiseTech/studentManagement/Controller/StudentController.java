@@ -1,5 +1,6 @@
 package raiseTech.studentManagement.Controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import java.util.List;
@@ -35,6 +36,7 @@ public class StudentController {
    *全件検索するため、条件指定はなし
    * @return 受講生全件検索の一覧
    */
+  @Operation(summary = "一覧検索", description = "受講生一覧の検索")
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
@@ -46,6 +48,7 @@ public class StudentController {
    * @param id　受講生ID
    * @return 受講生
    */
+  @Operation(summary = "単一検索", description = "受講生単一検索")
   @GetMapping("/student/{id}")
   public StudentDetail getStudent(@PathVariable @Min(value = 1) Long id) {
     return service.searchStudent(id);
@@ -56,6 +59,7 @@ public class StudentController {
    * @param studentDetail 受講生詳細
    * @return 実行結果
    */
+  @Operation(summary = "受講生新規登録", description = "新規受講生登録には受講生id,削除フラグとコースidの入力フォームは自動生成のため不要")
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent (@RequestBody @Valid StudentDetail studentDetail) {
     StudentDetail responseStudentDetail = service.newInsetStudent(studentDetail);
@@ -68,6 +72,7 @@ public class StudentController {
     * @param studentDetail 受講生詳細
    * @return 実行結果
    */
+ @Operation(summary = "受講生情報更新", description = "受講生詳細,受講生コース情報の更新の際に受講生コース情報の生徒idの入力フォームは不要です。")
  @PutMapping("/updateStudent")
  public ResponseEntity<String>updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
    service.updateStudent(studentDetail);
