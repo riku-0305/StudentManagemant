@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Schema(description = "受講生コース情報")
 @Getter
 @Setter
+@NoArgsConstructor
 public class StudentCourse {
 
   @Min(value = 1, message = "コースIDは1以上を入力してください")
@@ -24,5 +26,11 @@ public class StudentCourse {
 
   private LocalDate startDate;
   private LocalDate expectedEndDate;
+
+  public StudentCourse(Long coursesId, Long studentsId, String coursesName) {
+    this.coursesId = coursesId;
+    this.studentsId = studentsId;
+    this.coursesName = coursesName;
+  }
 
 }
