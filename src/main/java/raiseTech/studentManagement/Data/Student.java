@@ -7,12 +7,13 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Schema(description = "受講生")
 @Getter
 @Setter
-
+@NoArgsConstructor
 public class Student {
 
   @Min(value = 1, message = "IDは1以上の整数値を入力してください")
@@ -47,4 +48,11 @@ public class Student {
   private String remark;
 
   private boolean delete;
+
+  public Student(Long id, String name, String reading, String mailAddress) {
+    this.id = id;
+    this.name = name;
+    this.reading = reading;
+    this.mailAddress = mailAddress;
+  }
 }
