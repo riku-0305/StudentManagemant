@@ -37,6 +37,5 @@ public class StudentConverter {
       studentDetails.add(studentDetail);
     });
     return studentDetails;
-
   }
 }
