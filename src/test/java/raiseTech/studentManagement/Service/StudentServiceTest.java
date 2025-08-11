@@ -130,4 +130,19 @@ class StudentServiceTest {
    Mockito.verify(repository,Mockito.times(1)).updateStudent(expectedUpdateStudent);
    Mockito.verify(repository,Mockito.times(1)).updateStudentCourse(expectedUpdateStudentCourse);
   }
+
+  @Test
+  void 存在しない受講生のidがリクエストされた時に例外を返す () {
+    Student notFoundStudent = new Student();
+    notFoundStudent.setId(99L);
+
+    Mockito.when(repository.searchStudent(notFoundStudent.getId())).thenReturn(null);
+
+    StudentNotFoundException actualException = Assertions.assertThrows(StudentNotFoundException.class,
+    ()-> sut.searchStudent(notFoundStudent.getId()));
+
+    Assertions.assertEquals(actualException.getId(),notFoundStudent.getId());
+
+    Mockito.verify(repository,Mockito.never()).updateStudent(Mockito.any());
+  }
 }

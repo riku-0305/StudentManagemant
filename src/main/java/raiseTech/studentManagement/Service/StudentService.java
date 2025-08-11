@@ -96,6 +96,12 @@ public class StudentService {
    */
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
+
+    Student student = repository.searchStudent(studentDetail.getStudent().getId());
+    if(student == null) {
+      throw new StudentNotFoundException(studentDetail.getStudent().getId());
+    }
+
     repository.updateStudent(studentDetail.getStudent());
     studentDetail.getStudentCourseList()
         .forEach(studentCourse -> repository.updateStudentCourse(studentCourse));
