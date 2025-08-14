@@ -4,6 +4,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
+import raiseTech.studentManagement.Data.StudentEnrollmentStatus;
 
 /**
  * 受講生テーブルと受講生コース情報テーブルに紐づくリポジトリ
@@ -40,6 +41,19 @@ public interface StudentRepository {
   List<StudentCourse> searchStudentCourse(Long studentsId);
 
   /**
+   * 受講生コース情報の申し込み状況の全件検索
+   * @return 受講生コース情報の申し込み状況(全件)
+   */
+  List<StudentEnrollmentStatus> searchStudentEnrollmentStatusList();
+
+  /**
+   * 受講生IDに紐づく受講生コース情報の申し込み状況の単一検索
+   * @param studentsCoursesId　
+   * @return 受講生IDに紐づく受講生コース情報の申し込み状況
+   */
+  List<StudentEnrollmentStatus> searchStudentEnrollmentStatus(Long studentsCoursesId);
+
+  /**
    * 新規受講生登録、IDにはDBの自動採番を設定
    * @param student 新規受講生情報
    */
@@ -52,6 +66,12 @@ public interface StudentRepository {
   void insertStudentCourse(StudentCourse studentCourse);
 
   /**
+   * 新規受講生コース情報の申し込み状況の登録
+   * @param studentEnrollmentStatus　新規受講生コース情報の申し込み状況
+   */
+  void insertStudentEnrollmentStatus (StudentEnrollmentStatus studentEnrollmentStatus);
+
+  /**
    *受講生情報の更新
    * @param student 受講生情報
    */
@@ -62,4 +82,7 @@ public interface StudentRepository {
    * @param studentCourse 受講生コース情報
    */
   void updateStudentCourse(StudentCourse studentCourse);
+
+
+  void updateStudentEnrollmentStatus(StudentEnrollmentStatus studentEnrollmentStatus);
 }

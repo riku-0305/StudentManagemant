@@ -21,6 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
+import raiseTech.studentManagement.Data.StudentEnrollmentStatus;
 import raiseTech.studentManagement.Domain.StudentDetail;
 import raiseTech.studentManagement.Service.StudentService;
 
@@ -47,8 +48,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生単一検索が可能で入浴されたidの受講生情報とコースリストが帰ってくること()
-      throws Exception {
+  void 受講生単一検索が可能で入浴されたidの受講生情報とコースリストが帰ってくること() throws Exception {
     Long id = 1L;
 
     mockMvc.perform(get("/student/{id}", id))
@@ -73,11 +73,12 @@ class StudentControllerTest {
     List<StudentCourse> responseStudentCourseList = new ArrayList<>();
     responseStudentCourseList.add(new StudentCourse(1L, 1L, "java"));
 
-    StudentDetail actualResponseDetail = new StudentDetail(responseStudent,
-        responseStudentCourseList);
+    List<StudentEnrollmentStatus> responseStudentEnrollmentStatuList = new ArrayList<>();
+    responseStudentEnrollmentStatuList.add(new StudentEnrollmentStatus(1L,1L,1L,"テスト"));
 
-    Mockito.when(service.newInsetStudent(Mockito.any(StudentDetail.class)))
-        .thenReturn(actualResponseDetail);
+    StudentDetail actualResponseDetail = new StudentDetail(responseStudent, responseStudentCourseList,responseStudentEnrollmentStatuList);
+
+    Mockito.when(service.newInsetStudent(Mockito.any(StudentDetail.class))).thenReturn(actualResponseDetail);
 
     String jsonExpectedRequest = objectMapper.writeValueAsString(actualResponseDetail);
 
@@ -90,8 +91,7 @@ class StudentControllerTest {
   }
 
   @Test
-  void 受講生情報及び受講生コース情報が更新が可能で更新時にメッセージをユーザーに返す()
-      throws Exception {
+  void 受講生情報及び受講生コース情報が更新が可能で更新時にメッセージをユーザーに返す() throws Exception {
 
     String expectedMessage = "更新処理に成功しました";
 
@@ -100,7 +100,10 @@ class StudentControllerTest {
     List<StudentCourse> responseStudentCourseList = new ArrayList<>();
     responseStudentCourseList.add(new StudentCourse(1L, 1L, "java"));
 
-    StudentDetail actualStudent = new StudentDetail(responseStudent, responseStudentCourseList);
+    List<StudentEnrollmentStatus> responseStudentEnrollmentStatusList = new ArrayList<>();
+    responseStudentEnrollmentStatusList.add(new StudentEnrollmentStatus(1L,1L,1L,"テスト"));
+
+    StudentDetail actualStudent = new StudentDetail(responseStudent, responseStudentCourseList,responseStudentEnrollmentStatusList);
 
     Mockito.doNothing().when(service).updateStudent(actualStudent);
 
@@ -156,6 +159,22 @@ class StudentControllerTest {
             "コースIDは1以上を入力してください",
             "生徒IDは1以上を入力してください",
             "コース名の登録は必須です"
+        );
+  }
+
+  @Test
+  void StudentEnrollmentStatusオブジェクトのバリデーション機能テスト() {
+    StudentEnrollmentStatus errorStudentEnrollmentStatus = new StudentEnrollmentStatus(0L,0L,0L," ");
+
+    Set<ConstraintViolation<StudentEnrollmentStatus>> violations = validator.validate(errorStudentEnrollmentStatus);
+
+    assertThat(violations.size()).isEqualTo(4);
+    assertThat(violations).extracting("message")
+        .containsExactlyInAnyOrder(
+            "申し込み状況のIDは1以上を入力してください",
+            "生徒IDは1以上を入力してください",
+            "コースIDは1以上を入力してください",
+            "申し込み状況の登録は必須です"
         );
   }
 }

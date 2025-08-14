@@ -20,3 +20,14 @@ CREATE TABLE students_courses (
 
     FOREIGN KEY (students_id) REFERENCES students(id)
 );
+
+CREATE TABLE enrollment_status (
+    status_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    students_id BIGINT NOT NULL,
+    students_courses_id BIGINT NOT NULL,
+    status VARCHAR(50),
+    FOREIGN KEY (students_id) REFERENCES students(id),
+    FOREIGN KEY (students_courses_id) REFERENCES students_courses(courses_id)
+);
+
+

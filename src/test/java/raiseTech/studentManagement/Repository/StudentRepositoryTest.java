@@ -9,6 +9,7 @@ import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
+import raiseTech.studentManagement.Data.StudentEnrollmentStatus;
 
 @MybatisTest
 class StudentRepositoryTest {
@@ -29,6 +30,12 @@ class StudentRepositoryTest {
   }
 
   @Test
+  void 受講生コース情報の申し込み状況の全件検索が行えること() {
+    List<StudentEnrollmentStatus> actualStudentEnrollmentStatus = sut.searchStudentEnrollmentStatusList();
+    assertThat(actualStudentEnrollmentStatus.size()).isEqualTo(3);
+  }
+
+  @Test
   void 受講生の単一検索が行えること() {
     Student expectedStudent = new Student();
     expectedStudent.setId(1L);
@@ -45,9 +52,20 @@ class StudentRepositoryTest {
     expectedStudentCourse.setStudentsId(2L);
     expectedStudentCourse.setCoursesName("Aws");
 
-    List<StudentCourse> studentCourseList = sut.searchStudentCourse(2L);
-    assertThat(expectedStudentCourse.getStudentsId()).isEqualTo(studentCourseList.getFirst().getStudentsId());
-    assertThat(expectedStudentCourse.getCoursesName()).isEqualTo(studentCourseList.getFirst().getCoursesName());
+    List<StudentCourse> actualStudentCourseList = sut.searchStudentCourse(2L);
+    assertThat(expectedStudentCourse.getStudentsId()).isEqualTo(actualStudentCourseList.getFirst().getStudentsId());
+    assertThat(expectedStudentCourse.getCoursesName()).isEqualTo(actualStudentCourseList.getFirst().getCoursesName());
+  }
+
+  @Test
+  void 受講生単一の受講生コース情報の申し込み状況の検索が行えること() {
+    StudentEnrollmentStatus expectedStudentEnrollmentStatus = new StudentEnrollmentStatus();
+    expectedStudentEnrollmentStatus.setStudentsCoursesId(3L);
+    expectedStudentEnrollmentStatus.setStatus("仮登録");
+
+    List<StudentEnrollmentStatus> actualStudentEnrollmentStatusList = sut.searchStudentEnrollmentStatus(3L);
+    assertThat(expectedStudentEnrollmentStatus.getStudentsCoursesId()).isEqualTo(actualStudentEnrollmentStatusList.getFirst().getStudentsCoursesId());
+    assertThat(expectedStudentEnrollmentStatus.getStatus()).isEqualTo(actualStudentEnrollmentStatusList.getFirst().getStatus());
   }
 
   @Test
@@ -78,6 +96,20 @@ class StudentRepositoryTest {
     List<StudentCourse> actualStudentCourseList = sut.searchCourseList();
 
     assertThat(actualStudentCourseList.size()).isEqualTo(4);
+  }
+
+  @Test
+  void 受講生コース情報の申し込み状況の登録が行えること() {
+    StudentEnrollmentStatus studentEnrollmentStatus = new StudentEnrollmentStatus();
+    studentEnrollmentStatus.setStudentsId(1L);
+    studentEnrollmentStatus.setStudentsCoursesId(1L);
+    studentEnrollmentStatus.setStatus("仮申し込み");
+
+    sut.insertStudentEnrollmentStatus(studentEnrollmentStatus);
+
+    List<StudentEnrollmentStatus> actualStudentEnrollmentStatusList = sut.searchStudentEnrollmentStatusList();
+
+    assertThat(actualStudentEnrollmentStatusList.size()).isEqualTo(4);
   }
 
   @Test
@@ -114,5 +146,22 @@ class StudentRepositoryTest {
 
     assertThat(updateStudentCourse.getCoursesName()).isEqualTo(newStudentCourse.getFirst().getCoursesName());
     assertThat(oldStudentCourse.size()).isEqualTo(newStudentCourse.size());
+  }
+
+  @Test
+  void 受講生コース情報の申し込み状況の更新が行えること() {
+
+    StudentEnrollmentStatus updateStudentEnrollmentStatus = new StudentEnrollmentStatus();
+    updateStudentEnrollmentStatus.setStatusId(1L);
+    updateStudentEnrollmentStatus.setStatus("本申し込み");
+
+    List<StudentEnrollmentStatus> oldStudentEnrollmentStatus = sut.searchStudentEnrollmentStatusList();
+
+    sut.updateStudentEnrollmentStatus(updateStudentEnrollmentStatus);
+
+    List<StudentEnrollmentStatus> newStudentEnrollmentStatusList = sut.searchStudentEnrollmentStatusList();
+
+    assertThat(updateStudentEnrollmentStatus.getStatus()).isEqualTo(newStudentEnrollmentStatusList.getFirst().getStatus());
+    assertThat(oldStudentEnrollmentStatus.size()).isEqualTo(newStudentEnrollmentStatusList.size());
   }
 }
