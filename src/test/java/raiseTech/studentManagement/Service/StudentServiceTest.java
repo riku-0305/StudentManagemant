@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import raiseTech.studentManagement.Controller.Converter.StudentConverter;
 import raiseTech.studentManagement.Data.Student;
 import raiseTech.studentManagement.Data.StudentCourse;
+import raiseTech.studentManagement.Data.StudentEnrollmentStatus;
 import raiseTech.studentManagement.Domain.StudentDetail;
 import raiseTech.studentManagement.Exception.StudentNotFoundException;
 import raiseTech.studentManagement.Repository.StudentRepository;
@@ -37,19 +38,21 @@ class StudentServiceTest {
 
     List<Student> studentList = new ArrayList<>();
     List<StudentCourse> studentCourseList = new ArrayList<>();
+    List<StudentEnrollmentStatus> studentEnrollmentStatusList = new ArrayList<>();
     Mockito.when(repository.search()).thenReturn(studentList);
     Mockito.when(repository.searchCourseList()).thenReturn(studentCourseList);
+    Mockito.when(repository.searchStudentEnrollmentStatusList()).thenReturn(studentEnrollmentStatusList);
 
     sut.searchStudentList();
 
     Mockito.verify(repository, Mockito.times(1)).search();
     Mockito.verify(repository, Mockito.times(1)).searchCourseList();
-    Mockito.verify(converter, Mockito.times(1))
-        .convertStudentDetails(studentList, studentCourseList);
+    Mockito.verify(repository,Mockito.times(1)).searchStudentEnrollmentStatusList();
+    Mockito.verify(converter, Mockito.times(1)).convertStudentDetails(studentList, studentCourseList, studentEnrollmentStatusList);
   }
 
   @Test
-  void 受講生単一の検索でidで指定された受講生情報及び受講コース情報がリポジトリから適切に呼び出せているか() {
+  void 受講生単一の検索でidで指定された受講生情報及び受講コース情報と申し込み状況がリポジトリから適切に呼び出せているか() {
 
     Student expectedStudent = new Student();
     expectedStudent.setId(1L);
@@ -57,16 +60,24 @@ class StudentServiceTest {
 
     StudentCourse expectedStudentCourse = new StudentCourse();
     expectedStudentCourse.setStudentsId(1L);
+    expectedStudentCourse.setCoursesId(1L);
     expectedStudentCourse.setCoursesName("テストコース");
     List<StudentCourse> expectedStudentCourseList = new ArrayList<>();
     expectedStudentCourseList.add(expectedStudentCourse);
-    Mockito.when(repository.searchStudentCourse(expectedStudent.getId()))
-        .thenReturn(expectedStudentCourseList);
+    Mockito.when(repository.searchStudentCourse(expectedStudent.getId())).thenReturn(expectedStudentCourseList);
+
+    StudentEnrollmentStatus expectedStudentEnrollmentStatus = new StudentEnrollmentStatus();
+    expectedStudentEnrollmentStatus.setStudentsCoursesId(1L);
+    expectedStudentEnrollmentStatus.setStatus("テスト");
+    List<StudentEnrollmentStatus> expectedStudentEnrollmentStatusList = new ArrayList<>();
+    expectedStudentEnrollmentStatusList.add(expectedStudentEnrollmentStatus);
+    Mockito.when(repository.searchStudentEnrollmentStatus(expectedStudentCourse.getCoursesId())).thenReturn(expectedStudentEnrollmentStatusList);
 
     sut.searchStudent(expectedStudent.getId());
 
     Mockito.verify(repository, Mockito.times(1)).searchStudent(expectedStudent.getId());
     Mockito.verify(repository, Mockito.times(1)).searchStudentCourse(expectedStudentCourse.getStudentsId());
+    Mockito.verify(repository,Mockito.times(1)).searchStudentEnrollmentStatus(expectedStudentEnrollmentStatus.getStudentsCoursesId());
   }
 
   @Test
@@ -84,6 +95,7 @@ class StudentServiceTest {
 
     Mockito.verify(repository, Mockito.times(1)).searchStudent(expectedStudent.getId());
     Mockito.verify(repository, Mockito.never()).searchStudentCourse(Mockito.anyLong());
+    Mockito.verify(repository,Mockito.never()).searchStudentEnrollmentStatus(Mockito.anyLong());
   }
 
   @Test
@@ -93,42 +105,61 @@ class StudentServiceTest {
 
     StudentCourse expectedRegisterStudentCourse = new StudentCourse();
     expectedRegisterStudentCourse.setCoursesName("テストコース");
-
     List<StudentCourse> expectedStudentCourseList = new ArrayList<>();
     expectedStudentCourseList.add(expectedRegisterStudentCourse);
 
-    StudentDetail actualStudent = new StudentDetail(expectedRegisterStudent, expectedStudentCourseList);
+    StudentEnrollmentStatus expectedStudentEnrollmentStatus = new StudentEnrollmentStatus();
+    expectedStudentEnrollmentStatus.setStatus("テスト");
+    List<StudentEnrollmentStatus> expectedStudentEnrollmentStatusList = new ArrayList<>();
+    expectedStudentEnrollmentStatusList.add(expectedStudentEnrollmentStatus);
+
+    StudentDetail actualStudent = new StudentDetail(expectedRegisterStudent, expectedStudentCourseList,expectedStudentEnrollmentStatusList);
 
     Mockito.doNothing().when(repository).insertStudent(expectedRegisterStudent);
     Mockito.doNothing().when(repository).insertStudentCourse(expectedRegisterStudentCourse);
+    Mockito.doNothing().when(repository).insertStudentEnrollmentStatus(expectedStudentEnrollmentStatus);
 
     sut.newInsetStudent(actualStudent);
 
     Mockito.verify(repository, Mockito.times(1)).insertStudent(expectedRegisterStudent);
     Mockito.verify(repository, Mockito.times(1)).insertStudentCourse(expectedRegisterStudentCourse);
+    Mockito.verify(repository,Mockito.times(1)).insertStudentEnrollmentStatus(expectedStudentEnrollmentStatus);
   }
 
   @Test
   void 受講生更新時に更新された受講生情報と受講生コース情報をリポジトリに渡せているか() {
    Student expectedUpdateStudent = new Student();
+   expectedUpdateStudent.setId(1L);
    expectedUpdateStudent.setName("テスト");
 
    StudentCourse expectedUpdateStudentCourse = new StudentCourse();
+   expectedUpdateStudentCourse.setStudentsId(1L);
+   expectedUpdateStudentCourse.setCoursesId(1L);
    expectedUpdateStudentCourse.setCoursesName("テストコース");
-
    List<StudentCourse> expectedUpdateStudentCourseList = new ArrayList<>();
    expectedUpdateStudentCourseList.add(expectedUpdateStudentCourse);
 
-   StudentDetail actualUpdateStudent = new StudentDetail(expectedUpdateStudent,expectedUpdateStudentCourseList);
+    StudentEnrollmentStatus expectedStudentEnrollmentStatus = new StudentEnrollmentStatus();
+    expectedStudentEnrollmentStatus.setStatusId(1L);
+    expectedStudentEnrollmentStatus.setStudentsId(1L);
+    expectedStudentEnrollmentStatus.setStudentsCoursesId(1L);
+    expectedStudentEnrollmentStatus.setStatus("テスト");
+    List<StudentEnrollmentStatus> expectedStudentEnrollmentStatusList = new ArrayList<>();
+    expectedStudentEnrollmentStatusList.add(expectedStudentEnrollmentStatus);
+
+   StudentDetail actualUpdateStudent = new StudentDetail(expectedUpdateStudent,expectedUpdateStudentCourseList,expectedStudentEnrollmentStatusList);
+
+   Mockito.when(repository.searchStudent(1L)).thenReturn(expectedUpdateStudent);
 
    Mockito.doNothing().when(repository).updateStudent(expectedUpdateStudent);
    Mockito.doNothing().when(repository).updateStudentCourse(expectedUpdateStudentCourse);
+   Mockito.doNothing().when(repository).updateStudentEnrollmentStatus(expectedStudentEnrollmentStatus);
 
    sut.updateStudent(actualUpdateStudent);
 
-
    Mockito.verify(repository,Mockito.times(1)).updateStudent(expectedUpdateStudent);
    Mockito.verify(repository,Mockito.times(1)).updateStudentCourse(expectedUpdateStudentCourse);
+   Mockito.verify(repository,Mockito.times(1)).updateStudentEnrollmentStatus(expectedStudentEnrollmentStatus);
   }
 
   @Test

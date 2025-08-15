@@ -22,6 +22,16 @@
     SELECT * FROM students_courses WHERE students_id = #{studentsId}
   </select>
 
+  <!-- 受講生のコース申し込み状況の一覧検索　-->
+  <select id="searchStudentEnrollmentStatusList" resultType="raiseTech.studentManagement.Data.StudentEnrollmentStatus">
+    SELECT * FROM enrollment_status
+  </select>
+
+  <!-- 受講生IDに紐づく受講生コース情報の申し込み状況の単一検索　-->
+  <select id="searchStudentEnrollmentStatus" resultType="raiseTech.studentManagement.Data.StudentEnrollmentStatus">
+    SELECT * FROM enrollment_status WHERE students_courses_id = #{studentsCoursesId}
+  </select>
+
   <!-- 新規受講生登録 -->
   <insert id="insertStudent" parameterType="raiseTech.studentManagement.Data.Student" useGeneratedKeys = "true" keyProperty = "id">
     INSERT INTO students (name, reading, nick_name, mail_address, address, age, gender , remark)
@@ -32,6 +42,12 @@
   <insert id="insertStudentCourse" parameterType="raiseTech.studentManagement.Data.StudentCourse" useGeneratedKeys = "true" keyProperty = "coursesId">
     INSERT INTO  students_courses (students_id,  courses_name, start_date, expected_end_date)
     VALUES (#{studentsId}, #{coursesName}, #{startDate}, #{expectedEndDate})
+  </insert>
+
+  <!-- 新規受講生コース情報申し込み状況登録 -->
+  <insert id="insertStudentEnrollmentStatus" parameterType="raiseTech.studentManagement.Data.StudentEnrollmentStatus" useGeneratedKeys = "true" keyProperty = "statusId">
+    INSERT INTO enrollment_status (students_id, students_courses_id, status)
+    VALUES (#{studentsId}, #{studentsCoursesId}, #{status})
   </insert>
 
   <!-- 受講生情報の更新 -->
@@ -49,4 +65,10 @@
     WHERE  courses_id = #{coursesId}
   </update>
 
+  <!-- 受講生コース情報の申し込み状況の確認 -->
+  <update id="updateStudentEnrollmentStatus" parameterType="raiseTech.studentManagement.Data.StudentEnrollmentStatus">
+    UPDATE enrollment_status
+    SET status = #{status}
+    WHERE  status_id = #{statusId}
+  </update>
 </mapper>
