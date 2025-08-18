@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import raiseTech.studentManagement.Domain.StudentDetail;
 import raiseTech.studentManagement.Exception.TestStudentListException;
@@ -32,13 +33,16 @@ public class StudentController {
   }
 
   /**
-   *受講生詳細一覧検索
-   *全件検索するため、条件指定はなし
-   * @return 受講生全件検索の一覧
+   * 受講生詳細一覧検索,または受講生の名前での検索
+   * @return 指定された名前の受講生の受講生情報,
+   * 名前での受講生検索が行われない場合に受講生詳細一覧を返す
    */
   @Operation(summary = "一覧検索", description = "受講生一覧の検索")
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
+  public List<StudentDetail> getStudentList(@RequestParam(name = "name", required = false) String name) {
+   if(name != null) {
+     return service.nameSearchStudentList(name);
+   }
     return service.searchStudentList();
   }
 

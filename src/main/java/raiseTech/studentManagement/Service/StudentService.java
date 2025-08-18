@@ -3,6 +3,7 @@ package raiseTech.studentManagement.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,29 @@ public class StudentService {
     List<StudentEnrollmentStatus> studentEnrollmentStatusList = repository.searchStudentEnrollmentStatusList();
     return studentConverter.convertStudentDetails(studentList, studentCourseList,
         studentEnrollmentStatusList);
+  }
+
+  /**
+   * 指定された名前と合致する受講生情報リストの検索
+   * @param name 指定された受講生の名前
+   * @return 指定された名前に合致する受講生のリスト
+   */
+  public List<StudentDetail> nameSearchStudentList(String name) {
+    String normalizationName = name.replaceAll("[ 　]", "");
+
+    List<Student> studentList = repository.search();
+
+    List<Student> selectStudentList = studentList.stream()
+        .filter(student -> student.getName().equals(normalizationName))
+        .collect(Collectors.toList());
+
+    if(selectStudentList.isEmpty()) {
+      throw new StudentNotFoundException(name);
+    }
+
+    List<StudentCourse> studentCourseList = repository.searchCourseList();
+    List<StudentEnrollmentStatus> studentEnrollmentStatusList = repository.searchStudentEnrollmentStatusList();
+    return studentConverter.convertStudentDetails(selectStudentList,studentCourseList,studentEnrollmentStatusList);
   }
 
   /**
