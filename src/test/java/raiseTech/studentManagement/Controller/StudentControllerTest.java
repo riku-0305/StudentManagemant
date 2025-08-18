@@ -48,6 +48,17 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生の名前を指定して検索が可能でnameSearchStudentListが呼び出せていること() throws Exception {
+    String name = "テスト";
+
+    mockMvc.perform(get("/studentList")
+        .param("name","テスト"))
+        .andExpect(status().isOk());
+
+    Mockito.verify(service,Mockito.times(1)).nameSearchStudentList(name);
+  }
+
+  @Test
   void 受講生単一検索が可能で入浴されたidの受講生情報とコースリストが帰ってくること() throws Exception {
     Long id = 1L;
 
@@ -140,7 +151,7 @@ class StudentControllerTest {
     assertThat(violations).extracting("message")
         .containsExactlyInAnyOrder(
             "IDは1以上の整数値を入力してください",
-            "名前入力は必須です",
+            "スペースや空白文字は使用できません",
             "ふりがなは必須です",
             "メールアドレスは必須です",
             "メールアドレスの形式が正しくありません",

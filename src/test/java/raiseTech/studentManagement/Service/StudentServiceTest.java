@@ -52,6 +52,42 @@ class StudentServiceTest {
   }
 
   @Test
+  void 受講生の名前での検索機能でリポジトリから適切に呼び出しが行われ指定された名前の受講生情報がコンバーターから呼び出せているか() {
+    List<Student> selectStudentList = new ArrayList<>();
+    selectStudentList.add(new Student(1L,"テスト","てすと","test@gmail.com"));
+    List<StudentCourse> StudentCourseList = new ArrayList<>();
+    List<StudentEnrollmentStatus> StudentEnrollmentStatusList = new ArrayList<>();
+
+    Mockito.when(repository.search()).thenReturn(selectStudentList);
+    Mockito.when(repository.searchCourseList()).thenReturn(StudentCourseList);
+    Mockito.when(repository.searchStudentEnrollmentStatusList()).thenReturn(StudentEnrollmentStatusList);
+
+    sut.nameSearchStudentList("テスト");
+
+    Mockito.verify(repository, Mockito.times(1)).search();
+    Mockito.verify(repository, Mockito.times(1)).searchCourseList();
+    Mockito.verify(repository,Mockito.times(1)).searchStudentEnrollmentStatusList();
+    Mockito.verify(converter,Mockito.times(1)).convertStudentDetails(selectStudentList,StudentCourseList, StudentEnrollmentStatusList);
+  }
+
+  @Test
+  void 受講生の名前での検索機能で指定された受講生リストが存在しない場合に例外をスローできているか() {
+    Student student = new Student();
+    student.setName("テスト");
+
+    Mockito.when(repository.search()).thenReturn(new ArrayList<>());
+
+    StudentNotFoundException actual = Assertions.assertThrows(StudentNotFoundException.class,
+        () -> sut.nameSearchStudentList(student.getName()));
+
+    Assertions.assertEquals(actual.getName(),student.getName());
+
+    Mockito.verify(repository,Mockito.times(1)).search();
+    Mockito.verify(repository,Mockito.never()).searchCourseList();
+    Mockito.verify(repository,Mockito.never()).searchStudentEnrollmentStatusList();
+  }
+
+  @Test
   void 受講生単一の検索でidで指定された受講生情報及び受講コース情報と申し込み状況がリポジトリから適切に呼び出せているか() {
 
     Student expectedStudent = new Student();
