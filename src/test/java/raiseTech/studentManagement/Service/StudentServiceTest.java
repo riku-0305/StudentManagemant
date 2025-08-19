@@ -2,6 +2,7 @@ package raiseTech.studentManagement.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.ibatis.javassist.bytecode.LineNumberAttribute;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,6 +86,39 @@ class StudentServiceTest {
     Mockito.verify(repository,Mockito.times(1)).search();
     Mockito.verify(repository,Mockito.never()).searchCourseList();
     Mockito.verify(repository,Mockito.never()).searchStudentEnrollmentStatusList();
+  }
+
+  @Test
+  void 受講生申し込み状況で指定された申し込み状況の受講生がリポジトリから適切に呼び出され指定された受講生がコンバーターから呼び出されているか() {
+    List<Student> studentList = new ArrayList<>();
+    studentList.add(new Student(1L,"テスト","テスト","test@gmail.com"));
+    List<StudentCourse> studentCourses = new ArrayList<>();
+    List<StudentEnrollmentStatus> studentEnrollmentStatusList = new ArrayList<>();
+    studentEnrollmentStatusList.add(new StudentEnrollmentStatus(1L,1L,1L,"テスト"));
+
+    Mockito.when(repository.search()).thenReturn(studentList);
+    Mockito.when(repository.searchCourseList()).thenReturn(studentCourses);
+    Mockito.when(repository.searchStudentEnrollmentStatusName("テスト")).thenReturn(studentEnrollmentStatusList);
+
+    sut.statusSearchStudentList("テスト");
+
+    Mockito.verify(repository,Mockito.times(1)).search();
+    Mockito.verify(repository,Mockito.times(1)).searchCourseList();
+    Mockito.verify(repository,Mockito.times(1)).searchStudentEnrollmentStatusName(studentEnrollmentStatusList.getFirst().getStatus());
+    Mockito.verify(converter,Mockito.times(1)).convertStudentDetails(studentList,studentCourses,studentEnrollmentStatusList);
+  }
+
+  @Test
+  void 受講生申し込み状況で指定された申し込み状況の受講生が存在しない場合にStudentNotFoundExceptionがスローされているか() {
+    Mockito.when(repository.searchStudentEnrollmentStatusName("テスト")).thenReturn(new ArrayList<>());
+
+    StudentNotFoundException actual = Assertions.assertThrows(StudentNotFoundException.class,
+        () -> sut.statusSearchStudentList("テスト"));
+
+    Assertions.assertEquals("テストに該当する受講生はみつかりませんでした", actual.getName());
+
+    Mockito.verify(repository,Mockito.times(1)).searchStudentEnrollmentStatusName("テスト");
+    Mockito.verify(repository,Mockito.times(0)).search();
   }
 
   @Test

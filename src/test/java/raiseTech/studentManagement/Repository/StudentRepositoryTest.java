@@ -3,6 +3,7 @@ package raiseTech.studentManagement.Repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -66,6 +67,12 @@ class StudentRepositoryTest {
     List<StudentEnrollmentStatus> actualStudentEnrollmentStatusList = sut.searchStudentEnrollmentStatus(3L);
     assertThat(expectedStudentEnrollmentStatus.getStudentsCoursesId()).isEqualTo(actualStudentEnrollmentStatusList.getFirst().getStudentsCoursesId());
     assertThat(expectedStudentEnrollmentStatus.getStatus()).isEqualTo(actualStudentEnrollmentStatusList.getFirst().getStatus());
+  }
+
+  @Test
+  void 指定された受講生申し込み状況リストの検索がおこなえること() {
+    List<StudentEnrollmentStatus> actual = sut.searchStudentEnrollmentStatusName("仮登録");
+    assertThat(actual.size()).isEqualTo(3);
   }
 
   @Test

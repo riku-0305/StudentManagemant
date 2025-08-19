@@ -3,6 +3,7 @@ package raiseTech.studentManagement.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,34 @@ public class StudentService {
     List<StudentCourse> studentCourseList = repository.searchCourseList();
     List<StudentEnrollmentStatus> studentEnrollmentStatusList = repository.searchStudentEnrollmentStatusList();
     return studentConverter.convertStudentDetails(selectStudentList,studentCourseList,studentEnrollmentStatusList);
+  }
+
+  /**
+   * 指定された受講コース申し込み状況に合致するする受講生情報リストの検索
+   * @param status　指定された受講コース申し込み状況
+   * @return 指定された受講コース申し込み状況に合致するする受講生情報リスト
+   */
+  public List<StudentDetail> statusSearchStudentList(String status) {
+    String normalizationStatus = status.replaceAll("[ 　]", "");
+
+    List<StudentEnrollmentStatus> selectEnrollmentStatus = repository.searchStudentEnrollmentStatusName(normalizationStatus);
+
+    if(selectEnrollmentStatus.isEmpty()) {
+      throw new StudentNotFoundException(status + "に該当する受講生はみつかりませんでした");
+    }
+
+    List<Student> studentList = repository.search();
+    List<StudentCourse> studentCourseList = repository.searchCourseList();
+
+    Set<Long> enrollmentStudentId = selectEnrollmentStatus.stream()
+        .map(StudentEnrollmentStatus::getStudentsId)
+        .collect(Collectors.toSet());
+
+    List<Student> selectStudent = studentList.stream()
+        .filter(students -> enrollmentStudentId.contains(students.getId()))
+        .collect(Collectors.toList());
+
+    return studentConverter.convertStudentDetails(selectStudent,studentCourseList,selectEnrollmentStatus);
   }
 
   /**

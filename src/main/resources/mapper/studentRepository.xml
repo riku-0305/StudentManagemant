@@ -32,6 +32,11 @@
     SELECT * FROM enrollment_status WHERE students_courses_id = #{studentsCoursesId}
   </select>
 
+  <!-- 受講生申し込み状況での検索 -->
+  <select id="searchStudentEnrollmentStatusName" resultType="raiseTech.studentManagement.Data.StudentEnrollmentStatus">
+    SELECT * FROM enrollment_status WHERE  status = #{status}
+  </select>
+
   <!-- 新規受講生登録 -->
   <insert id="insertStudent" parameterType="raiseTech.studentManagement.Data.Student" useGeneratedKeys = "true" keyProperty = "id">
     INSERT INTO students (name, reading, nick_name, mail_address, address, age, gender , remark)

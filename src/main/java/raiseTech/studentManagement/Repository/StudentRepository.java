@@ -53,6 +53,14 @@ public interface StudentRepository {
    */
   List<StudentEnrollmentStatus> searchStudentEnrollmentStatus(Long studentsCoursesId);
 
+
+  /**
+   * 指定された受講生コース情報の申し込み状況の検索
+   * @param status　
+   * @return 指定された受講生コース情報の申し込み状況リスト
+   */
+  List<StudentEnrollmentStatus> searchStudentEnrollmentStatusName(String status);
+
   /**
    * 新規受講生登録、IDにはDBの自動採番を設定
    * @param student 新規受講生情報

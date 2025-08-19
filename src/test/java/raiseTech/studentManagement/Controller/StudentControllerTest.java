@@ -59,6 +59,17 @@ class StudentControllerTest {
   }
 
   @Test
+  void 受講生の申し込み状況を指定して検索が可能でstatusSearchStudentListが呼び出されていること() throws Exception {
+    String status ="テスト";
+
+    mockMvc.perform(get("/studentList")
+        .param("status","テスト"))
+        .andExpect(status().isOk());
+
+    Mockito.verify(service,Mockito.times(1)).statusSearchStudentList(status);
+  }
+
+  @Test
   void 受講生単一検索が可能で入浴されたidの受講生情報とコースリストが帰ってくること() throws Exception {
     Long id = 1L;
 
