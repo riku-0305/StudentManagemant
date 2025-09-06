@@ -63,6 +63,7 @@ public class StudentController {
     return service.searchStudent(id);
   }
 
+
   /**
    * 新規の受講生詳細の登録
    * @param studentDetail 受講生詳細
